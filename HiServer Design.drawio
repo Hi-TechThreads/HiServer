@@ -52,7 +52,7 @@
         <mxCell id="m_3_VStWmqzN10MXDDd7-14" value="Microservices " style="swimlane;startSize=20;horizontal=1;childLayout=treeLayout;horizontalTree=0;sortEdges=1;resizable=0;containerType=tree;fontSize=12;" vertex="1" parent="1">
           <mxGeometry x="260" y="290" width="280" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="m_3_VStWmqzN10MXDDd7-15" value="User Service" style="whiteSpace=wrap;html=1;" vertex="1" parent="m_3_VStWmqzN10MXDDd7-14">
+        <mxCell id="m_3_VStWmqzN10MXDDd7-15" value="Authentication Service" style="whiteSpace=wrap;html=1;" vertex="1" parent="m_3_VStWmqzN10MXDDd7-14">
           <mxGeometry x="90" y="40" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="m_3_VStWmqzN10MXDDd7-16" value="Order Service" style="whiteSpace=wrap;html=1;" vertex="1" parent="m_3_VStWmqzN10MXDDd7-14">
