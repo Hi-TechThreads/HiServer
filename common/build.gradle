@@ -1,0 +1,21 @@
+// common/build.gradle
+plugins {
+    id 'org.springframework.boot' version '3.4.3'
+}
+group = 'common'
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    // Example dependency for logging
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
