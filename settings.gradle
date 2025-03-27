@@ -1,6 +1,5 @@
 rootProject.name = 'HiServer'
 include 'common'
 include 'auth-server'
-include 'auth-server:src:main:test'
-findProject(':auth-server:src:main:test')?.name = 'test'
+include 'gateway'
 
