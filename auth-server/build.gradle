@@ -4,6 +4,9 @@ plugins {
     id 'org.springframework.boot' version '3.4.3'
 }
 
+application {
+    mainClass = 'auth.AuthServerApplication'
+}
 
 ext {
     set('springCloudVersion', "2024.0.1")
@@ -26,12 +29,4 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-// Optionally configure the bootJar task to specify the main class
-application {
-    mainClass = 'user.UserServerApplication'
-}
-
-//tasks.withType(JavaExec) {
-//    jvmArgs += '--enable-preview'  // Enable preview features for running
-//}
 

@@ -1,10 +1,7 @@
-// auth-server/build.gradle
 plugins {
     id 'application'
     id 'org.springframework.boot' version '3.4.3'
 }
-
-group = 'authServer'
 
 ext {
     set('springCloudVersion', "2024.0.1")
@@ -23,16 +20,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    implementation 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-// Optionally configure the bootJar task to specify the main class
 application {
-    mainClass = 'authserver.AuthServerApplication'
+    mainClass = 'user.UserServerApplication'
 }
 
-//tasks.withType(JavaExec) {
-//    jvmArgs += '--enable-preview'  // Enable preview features for running
-//}
 
+test {
+    useJUnitPlatform()
+}

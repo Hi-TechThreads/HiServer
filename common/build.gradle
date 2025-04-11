@@ -1,9 +1,7 @@
-// common/build.gradle
 plugins {
     id 'java-library'
     id 'org.springframework.boot' version '3.4.3'
 }
-group = 'common'
 
 bootJar {
     enabled = false
@@ -16,9 +14,8 @@ jar {
 dependencies {
     // Example dependency for logging
     implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.projectlombok:lombok:1.18.30'
     implementation 'org.springframework:spring-web:6.2.3'
-    
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
