@@ -4,6 +4,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.3'
 }
 
+group = 'authServer'
 
 ext {
     set('springCloudVersion', "2024.0.1")
@@ -28,7 +29,7 @@ dependencies {
 
 // Optionally configure the bootJar task to specify the main class
 application {
-    mainClass = 'user.UserServerApplication'
+    mainClass = 'authserver.AuthServerApplication'
 }
 
 //tasks.withType(JavaExec) {

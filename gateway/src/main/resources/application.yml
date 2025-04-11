@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Enable lookup via Eureka service IDs
+          lower-case-service-id: true # Conver service IDs
+      routes:
+        - id: user-service-route
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=1
+#            - AuthenticationFilter
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 10 # Tokens per second
+#                redis-rate-limiter.burstCapacity: 20 # Max request in a burst
+#                key-resolver: "#{ipKeyResolver}"  # Bean to resolve client key (IP)
+#            - name: CircuitBreaker
+#              args:
+#                name: userServiceCircuitBreaker
+#                fallbackUri: forward:/fallback/users # Path to call if service is down
+
+        - id: auth-service-route
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=1
+            -
+  # Redis for rate limiter
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}$
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10
+
+  timelimiter:
+    instances:
+      userServiceCircuitBreaker:
+        timeout-duration: 2s
+

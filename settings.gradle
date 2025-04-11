@@ -2,4 +2,7 @@ rootProject.name = 'HiServer'
 include 'common'
 include 'auth-server'
 include 'gateway'
+include 'service-registry'
+include 'config-server'
+include 'user-service'
 
