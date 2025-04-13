@@ -39,11 +39,11 @@ public class User {
     private String email;
 
     @Size(max = 50, message = "First name cannot be over 50 characters")
-    @Column(length = 50)
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
     @Size(max = 50, message = "Last name cannot be over 50 characters")
-    @Column(length = 50)
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Enumerated(EnumType.STRING)
@@ -51,10 +51,10 @@ public class User {
     private Role role = Role.USER;  // Default the role to user
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 }

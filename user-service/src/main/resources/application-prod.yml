@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/restaurant_users?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-    username: ${SPRING_DATASOURCE_USERNAME:user_service_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       pool-name: UserSvcHikariPool
@@ -16,19 +16,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: ${JPA_SHOW_SQL:false}
+    show-sql: ${JPA_SHOW_SQL}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: ${JPA_FORMAT_SQL:false}
+        format_sql: ${JPA_FORMAT_SQL}
   cache:
     type: redis
     redis:
       time-to-live: 60000
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   security:
 
 logging:
@@ -47,7 +47,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+      defaultZone: ${EUREKA_URI}
     healthcheck:
       enabled: true
 
@@ -83,4 +83,8 @@ management:
         enabled: true
   zipkin:
     tracing:
-      endpoint: ${ZIPKIN_URI:http://localhost:9411/api/v2/spans}
+      endpoint: ${ZIPKIN_URI}
+
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT}

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: user-server
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true # Fail startup if the config server is unreachable
+      retry:
+        initial-interval: 1000
+        max-attempts: 10
+        max_interval: 2000
+
+    discovery:
+      enabled: false
