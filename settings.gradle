@@ -1,8 +1,13 @@
 rootProject.name = 'HiServer'
+
+// Include core services
 include 'common'
 include 'auth-server'
 include 'gateway'
 include 'service-registry'
 include 'config-server'
 include 'user-service'
+
+// Include project-specific services
+include 'projects:restaurant:menu-service'
 
