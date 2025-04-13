@@ -28,7 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly=true)
-@CacheConfig
+@CacheConfig(cacheNames = "users")
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;

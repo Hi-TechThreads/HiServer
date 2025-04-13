@@ -3,7 +3,7 @@ spring:
     name: user-server
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
       fail-fast: true # Fail startup if the config server is unreachable
       retry:
         initial-interval: 1000
@@ -11,4 +11,4 @@ spring:
         max_interval: 2000
 
     discovery:
-      enabled: false
+      enabled: true

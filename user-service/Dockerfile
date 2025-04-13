@@ -1,27 +1,33 @@
-# Use a base image with Java and any necessary tools
-FROM eclipse-temurin:21-jdk-jammy
+# --- Stage 1: Build ---
+FROM gradle:8.8.0-jdk17-jammy as builder
+WORKDIR /workspace/app
 
-# Set working directory
+# Copy parent-level Gradle files from the project root.
+COPY gradlew .
+COPY gradle/ gradle/
+COPY build.gradle .
+COPY settings.gradle .
+
+# Copy the eureka-server subproject files.
+COPY user-service/build.gradle user-service/build.gradle
+COPY user-service/src user-service/src
+
+# Build the bootJar task for the eureka-server subproject.
+RUN chmod +x gradlew && ./gradlew :user-service:bootJar --no-daemon -x test --stacktrace --info
+
+# --- Stage 2: Run ---
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
-# Copy the packaged jar file (assuming maven builds it in target/)
-# The JAR name might vary based on your pom.xml artifactId/version
-COPY target/user-service-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR from the builder stage.
+COPY --from=builder /workspace/app/user-service/build/libs/user-service-*.jar app.jar
 
 # Expose the port the application runs on (as defined in application.yml/config server)
 EXPOSE 8081
 
-# Command to run the application
-# Use environment variables for dynamic configuration (DB creds, Eureka URL, Config Server URL)
-ENTRYPOINT ["java", "-jar", \
-            "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:default}", \
-            "-Deureka.client.serviceUrl.defaultZone=${EUREKA_URI}", \
-            "-Dspring.cloud.config.uri=${CONFIG_SERVER_URI}", \
-            # Add DB creds, Kafka brokers, Redis host etc. as needed
-             "-Dspring.datasource.url=${DB_URL}", \
-             "-Dspring.datasource.username=${DB_USER}", \
-             "-Dspring.datasource.password=${DB_PASS}", \
-            "/app/app.jar"]
+ENV SPRING_PROFILES_ACTIVE=prod
+
+ENTRYPOINT sh -c "java ${JAVA_OPTS:-} -jar -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} /app/app.jar"
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \

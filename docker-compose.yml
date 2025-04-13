@@ -1,0 +1,149 @@
+version: '3.8'
+
+services:
+
+  eureka-server:
+    build:
+      context: . # Path to the service-registry module directory
+      dockerfile: service-registry/Dockerfile # Explicitly use the local dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761" # Map port 8761 on host to 8761 in container
+    networks:
+      - hi-server # Must be on the same network as services that need to register
+    environment:
+      SPRING_PROFILES_ACTIVE: local # Activate local profile if eureka has specific local config needs
+      EUREKA_HOSTNAME: eureka-server
+    healthcheck: # Reuse healthcheck defined in Dockerfile
+      # You can override interval/timeout/retries here if needed
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - hi-server
+    environment:
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/Main-Lib-Squad/config-server.git
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+
+  #############################################
+  # Databases & Cache
+  #############################################
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hi-server
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mysql-db:
+    image: mysql:8.0 # Use specific MySQL version
+    container_name: mysql-db
+    ports:
+      - "3307:3306" # Map to host port 3307 to avoid conflict if local MySQL runs on 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Password for root user (only for local dev!)
+      MYSQL_DATABASE: usersdb
+      MYSQL_USER: local_user
+      MYSQL_PASSWORD: local_password
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist MySQL data
+      # Optional: Mount init scripts for order-service schema/data
+      # - ./projects/restaurant/order-service/src/main/resources/db/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - hi-server
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mongo-db:
+    image: mongo:latest # Use official MongoDB image
+    container_name: mongo-db
+    ports:
+      - "27017:27017" # Map MongoDB default port
+    environment:
+      # Optional: Configure MongoDB user/pass if needed for local testing
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: restaurant_menu_local # Database for menu-service
+    volumes:
+      - mongo_data:/data/db # Persist MongoDB data
+      # Optional: Mount init scripts for menu-service data
+      # - ./projects/restaurant/menu-service/src/main/resources/db/mongo:/docker-entrypoint-initdb.d
+    networks:
+      - hi-server
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${MONGO_INITDB_DATABASE} --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  #############################################
+  # Core Application Services
+  #############################################
+
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    networks:
+      - hi-server
+    environment:
+      # Set profile and connection details for services within the Docker network
+      SPRING_PROFILES_ACTIVE: local
+      CONFIG_SERVER_URI: config-server
+      EUREKA_URI: http://${eureka-serve}:8761/eureka/
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MYSQL_HOST: mysql-db
+      MYSQL_PORT: 3306
+    depends_on:
+      # Define startup dependencies
+#      config-server:
+#        condition: service_started # Basic condition, doesn't guarantee health
+      eureka-server:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      mysql-db:
+        condition: service_healthy
+
+
+#############################################
+# Networks & Volumes
+#############################################
+
+networks:
+  hi-server:
+    driver: bridge # Default Docker network driver
+
+volumes:
+  redis_data:
+    driver: local
+  mysql_data:
+    driver: local
+  mongo_data:
+    driver: local
