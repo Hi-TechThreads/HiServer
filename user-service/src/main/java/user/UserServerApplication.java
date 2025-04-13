@@ -8,7 +8,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching
-//@EnableFeignClients
+//@EnableFeignClients   // We are going to use gRPC to communicate with other microservices
 public class UserServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserServerApplication.class, args);

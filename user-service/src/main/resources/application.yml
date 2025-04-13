@@ -1,21 +1,82 @@
 server:
   port: 8081
 
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/restaurant_users?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:user_service_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: UserSvcHikariPool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000 # 30 seconds
+      idle-timeout: 60000 # 10 minutes
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: ${JPA_FORMAT_SQL:false}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  security:
+
+logging:
+  level:
+    user.userservice: INFO
+    org.springframework.web: INFO
+    org.hibernate: WARN
+  file:
+    name: logs/user-service.log
 
 # Eureka client config
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: ${EUREKA_URI:http:localhost:8761/eureka}$
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
 
 management:
-  tracing:
-    sampling:
-      probability: 1.0   # trace all requests
-  endpoint:
+  endpoints:
     web:
       exposure:
         include: "*" # Expose all actuator endpoints
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db,redisCache
+        liveness:
+          include: livenessState
+  health:
+    redis:
+      enabled: true
+    db:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0   # trace all requests
+    propagation:
+      type: w3c,b3
   prometheus:
     metrics:
       export:
