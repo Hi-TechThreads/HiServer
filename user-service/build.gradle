@@ -17,7 +17,7 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 
     // Serialization support for redis cache to serialize the Instant type time (createdAt and updateAt)
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // === gRPC Dependencies ===
     implementation "net.devh:grpc-spring-boot-starter:${grpcSpringBootStarterVersion}"

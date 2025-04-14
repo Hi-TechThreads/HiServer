@@ -20,6 +20,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
@@ -32,7 +33,7 @@ spring:
   # SQL initialization
   sql:
     init:
-      mode: always  # run data.sql to populate the H2 database
+      mode: always  # run data.sql to populate the mysql database
       data-locations: classpath:data.sql
       schema-locations: classpath:schema.sql
       platform: mysql
