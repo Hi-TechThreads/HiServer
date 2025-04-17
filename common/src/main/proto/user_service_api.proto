@@ -1,0 +1,106 @@
+// common/src/main/proto/user_api.proto
+
+syntax = "proto3";
+
+// Define a package specific to the common gRPC definitions
+package common.grpc;
+
+// Standard Java generation options
+option java_multiple_files = true;
+option java_package = "user_service.grpc.proto"; // Generated classes go here
+option java_outer_classname = "UserServiceApiProto"; // Outer class name for non-multiple files
+
+// Import common types like Timestamp
+import "google/protobuf/timestamp.proto";
+
+// --- Enums ---
+
+// User Role Definition
+enum Role {
+  USER = 0; // Default must be 0
+  ADMIN = 1;
+}
+
+// --- Message Definitions ---
+
+// Represents user information safe for public/general exposure (NO password hash)
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  Role role = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// Represents detailed user information needed internally by auth-service
+// Includes sensitive data like password hash and account status.
+message UserDetailsResponse {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string password_hash = 4;       // The securely hashed password
+  Role role = 5;                  // Use 'repeated Role roles = 5;' if multiple roles are possible
+  bool enabled = 6;               // Account status flags needed by Spring Security
+  bool account_non_expired = 7;
+  bool credentials_non_expired = 8;
+  bool account_non_locked = 9;
+  string first_name = 10;         // Optional: include if needed by auth flows
+  string last_name = 11;          // Optional: include if needed by auth flows
+}
+
+// Request to get a user by their ID (potentially public)
+message GetUserByIdRequest {
+  int64 id = 1;
+}
+
+// Request to get detailed user info by username (internal)
+message GetUserDetailsByUsernameRequest {
+  string username = 1;
+}
+
+// Request to get detailed user info by email (internal)
+message GetUserDetailsByEmailRequest {
+  string email = 1;
+}
+
+// Request payload for registering a new user (internal)
+message RegistrationGrpcRequest {
+  string username = 1;
+  string password = 2; // Plain text password for initial registration
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  // Role is typically defaulted to USER by user-service logic, not passed in request
+}
+
+// Response payload after successful user registration (internal)
+message RegistrationGrpcResponse {
+  int64 created_user_id = 1; // ID of the newly created user
+  string username = 2;
+  string email = 3;
+  Role role = 4; // Role assigned (usually USER)
+}
+
+
+// --- Service Definition ---
+
+// Defines the contract for user-related operations callable via gRPC
+service UserService {
+
+  // Public-facing RPC method (example) - returns limited info
+  rpc GetUserById(GetUserByIdRequest) returns (UserResponse);
+
+  // Internal RPC methods for auth-service (return detailed info)
+  // These endpoints MUST be secured appropriately within user-service
+//  rpc GetUserDetailsByUsername(GetUserDetailsByUsernameRequest) returns (UserDetailsResponse);
+//  rpc GetUserDetailsByEmail(GetUserDetailsByEmailRequest) returns (UserDetailsResponse);
+
+  // Internal RPC method for auth-service to trigger user registration
+  rpc RegisterUser(RegistrationGrpcRequest) returns (RegistrationGrpcResponse);
+
+  // Add other gRPC methods as needed (e.g., UpdateUser, DeleteUser if exposed via gRPC)
+
+}

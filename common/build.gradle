@@ -1,9 +1,13 @@
 plugins {
     id 'java-library'
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 dependencies {
-    // Example dependency for logging
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.springframework:spring-web:6.2.3'
+    api "net.devh:grpc-spring-boot-starter:${grpcSpringBootStarterVersion}"
+    api "io.grpc:grpc-protobuf:${grpcVersion}"
+    api "io.grpc:grpc-stub:${grpcVersion}"
+    api "com.google.protobuf:protobuf-java:${protobufVersion}"
+
+    api "javax.annotation:javax.annotation-api:${annotationApiVersion}"
 }
