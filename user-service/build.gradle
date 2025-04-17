@@ -27,8 +27,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
-    //gRPC testing
-    testImplementation "net.devh:grpc-client-spring-boot-starter:${grpcSpringBootStarterVersion}"
+    // === gRPC Dependencies ===
+//    implementation "net.devh:grpc-spring-boot-starter:${grpcSpringBootStarterVersion}"
+//    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+//    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+
 }
 
 application {
