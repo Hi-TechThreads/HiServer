@@ -18,7 +18,7 @@ import java.time.Duration;
 @EnableCaching
 public class CacheConfig {
 
-    @Bean("redisOjectMapper")
+    @Bean("redisObjectMapper")
     public ObjectMapper redisObjectMapper(){
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -32,7 +32,6 @@ public class CacheConfig {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(24))
                 .disableCachingNullValues()
-                .serializeValuesWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(SerializationPair.fromSerializer(redisSerializer));
     }
 

@@ -1,0 +1,43 @@
+# src/test/resources/application-test.yml
+spring:
+  # --- H2 Configuration for Tests ---
+  datasource:
+    url: jdbc:h2:mem:user_service_testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL # In-memory DB, MySQL compatibility mode helps
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop # Create schema for H2 automatically for tests
+    show-sql: false # Usually false for tests unless debugging
+
+  # Disable SQL init scripts by default for tests unless specifically needed
+  sql:
+    init:
+      mode: never # Let ddl-auto handle schema, use test setup methods for data
+
+  # Use simple cache manager for testing annotations
+  cache:
+    type: simple
+
+  # Disable connections to external services
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+
+# Optional: Configure gRPC for tests (e.g., in-process server)
+# grpc:
+#   server:
+#     port: -1 # Use random port for test server
+#   client:
+#     inProcess: # Example client name for in-process communication
+#       address: 'in-process:test' # Name matches server below if using in-process name
+# You might need more specific grpc test configs depending on the library version
+
+logging:
+  level:
+    com.restaurant.userservice: INFO # Or DEBUG if needed
+    # org.hibernate.SQL: DEBUG
