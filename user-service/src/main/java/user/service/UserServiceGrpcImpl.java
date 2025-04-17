@@ -6,9 +6,9 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import user.grpc.proto.GetUserRequest;
-import user.grpc.proto.UserResponse;
-import user.grpc.proto.UserServiceGrpc;
+import common.grpc.user.proto.GetUserByIdRequest;
+import common.grpc.user.proto.UserResponse;
+import common.grpc.user.proto.UserServiceGrpc;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -17,7 +17,7 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase{
     private final UserService userService;
 
     @Override
-    public void getUserById(GetUserRequest request, StreamObserver<UserResponse> responseObserver){
+    public void getUserById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver){
         UserDto userDto = userService.getUserById(request.getId());
         Timestamp createdAt = Timestamp.newBuilder()
                 .setSeconds(userDto.getCreatedAt().getEpochSecond())
