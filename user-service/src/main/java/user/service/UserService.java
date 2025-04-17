@@ -1,7 +1,6 @@
 package user.service;
 
 
-import common.exceptions.ResourceNotFoundException;
 import common.model.Role;
 import common.model.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import user.exception.ResourceNotFoundException;
 import user.exception.UserAlreadyExistsException;
 import user.model.CreateUserRequest;
 import user.model.UpdateUserRequest;
 import user.model.User;
 import user.repository.UserRepository;
 import user.utils.UserMapper;
-
-import java.util.Optional;
 
 
 @Service

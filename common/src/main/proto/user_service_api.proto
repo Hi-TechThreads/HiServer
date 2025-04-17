@@ -3,11 +3,11 @@
 syntax = "proto3";
 
 // Define a package specific to the common gRPC definitions
-package common.grpc;
+package common.grpc.user;
 
 // Standard Java generation options
 option java_multiple_files = true;
-option java_package = "user_service.grpc.proto"; // Generated classes go here
+option java_package = "common.grpc.user.proto"; // Generated classes go here
 option java_outer_classname = "UserServiceApiProto"; // Outer class name for non-multiple files
 
 // Import common types like Timestamp
