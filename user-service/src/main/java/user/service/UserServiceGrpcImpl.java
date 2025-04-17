@@ -1,14 +1,13 @@
 package user.service;
 
 import com.google.protobuf.Timestamp;
+import common.grpc.user.proto.*;
 import common.model.UserDto;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import common.grpc.user.proto.GetUserByIdRequest;
-import common.grpc.user.proto.UserResponse;
-import common.grpc.user.proto.UserServiceGrpc;
+import user.model.CreateUserRequest;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -37,6 +36,25 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase{
                 .setLastName(userDto.getLastName())
                 .setCreatedAt(createdAt)
                 .setUpdatedAt(updatedAt)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void registerUser(RegistrationGrpcRequest request, StreamObserver<RegistrationGrpcResponse> responseObserver){
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setEmail(request.getEmail());
+        createUserRequest.setUsername(request.getUsername());
+        createUserRequest.setPassword(request.getPassword());
+        createUserRequest.setFirstName(request.getFirstName());
+        createUserRequest.setLastName(request.getLastName());
+        UserDto userDto = userService.createUser(createUserRequest);
+        RegistrationGrpcResponse response = RegistrationGrpcResponse.newBuilder()
+                        .setEmail(userDto.getEmail())
+                        .setCreatedUserId(userDto.getId())
+                        .setUsername(userDto.getUsername())
+                        .setRoleValue(userDto.getRole().ordinal())
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
